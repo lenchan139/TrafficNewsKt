@@ -217,8 +217,21 @@ public class StreamingDataActivity extends AppCompatActivity {
         }
         locationManager.removeUpdates(locationListener);
         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,locationListener,null);
-        lat = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
-        lng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+        try {
+            lat = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+            lng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            try{
+
+                locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER ,locationListener,null);
+                lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
+                lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
+            }catch (NullPointerException e2) {
+                e2.printStackTrace();
+                Toast.makeText(this, "獲取地理位置失敗！", Toast.LENGTH_SHORT);
+            }
+        }
         Log.v("location",lat +"，" + lng);
     }
 

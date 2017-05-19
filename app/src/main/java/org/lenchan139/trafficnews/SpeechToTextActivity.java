@@ -108,8 +108,21 @@ public class SpeechToTextActivity extends AppCompatActivity implements
         locationManager.removeUpdates(locationListener);
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,locationListener,null);
-        lat = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
-        lng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+        try {
+            lat = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+            lng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            try{
+
+                locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER ,locationListener,null);
+                lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
+                lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
+            }catch (NullPointerException e2) {
+                e2.printStackTrace();
+                Toast.makeText(this, "獲取地理位置失敗！", Toast.LENGTH_SHORT);
+            }
+        }
         Geocoder geocoder = new Geocoder(getBaseContext(),Locale.TRADITIONAL_CHINESE);
         try {
             Address address = geocoder.getFromLocation(lat,lng,1).get(0);
@@ -221,7 +234,7 @@ public class SpeechToTextActivity extends AppCompatActivity implements
         public void onLocationChanged(Location loc) {
             Toast.makeText(
                     getBaseContext(),
-                    "Location changed: Lat: " + loc.getLatitude() + " Lng: "
+                    "座標變更: Lat: " + loc.getLatitude() + " Lng: "
                             + loc.getLongitude(), Toast.LENGTH_SHORT).show();
             String longitude = "Longitude: " + loc.getLongitude();
             Log.v("longitude: ", longitude);
@@ -229,6 +242,14 @@ public class SpeechToTextActivity extends AppCompatActivity implements
             Log.v("latitude: ", latitude);
             lat = loc.getLatitude();
             lng = loc.getLongitude();
+            Geocoder geocoder = new Geocoder(getBaseContext(),Locale.TRADITIONAL_CHINESE);
+            try {
+                Address address = geocoder.getFromLocation(lat,lng,1).get(0);
+                txtCurrLoc.setText(address.getThoroughfare());
+                Log.v("locat1",address.getThoroughfare());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
