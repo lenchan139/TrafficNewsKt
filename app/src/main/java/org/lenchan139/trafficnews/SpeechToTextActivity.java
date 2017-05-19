@@ -137,11 +137,11 @@ public class SpeechToTextActivity extends AppCompatActivity implements
         if (lng != -999 && lat != -999) {
             // Write a message to the database
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            String key = database.getReference("message").push().getKey();
-            database.getReference("message").child(key).child("msg").setValue(msg);
+            String key = database.getReference("message").child(txtCurrLoc.getText().toString()).push().getKey();
+            database.getReference("message").child(txtCurrLoc.getText().toString()).child(key).child("msg").setValue(msg);
             //database.getReference("message").child(key).child("location").setValue(LocationChecker(msg));
-            database.getReference("message").child(key).child("lat").setValue(lat);
-            database.getReference("message").child(key).child("lng").setValue(lng);
+            database.getReference("message").child(txtCurrLoc.getText().toString()).child(key).child("lat").setValue(lat);
+            database.getReference("message").child(txtCurrLoc.getText().toString()).child(key).child("lng").setValue(lng);
             Toast.makeText(SpeechToTextActivity.this, "上傳成功!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(SpeechToTextActivity.this, "上傳失敗！無法定位！", Toast.LENGTH_SHORT).show();

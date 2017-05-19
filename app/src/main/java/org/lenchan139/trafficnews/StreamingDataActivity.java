@@ -48,6 +48,7 @@ public class StreamingDataActivity extends AppCompatActivity {
     Button btnTtsOnOrOff;
     EditText edtTtsOnOrOff;
     ArrayList<String> list=new ArrayList<>();
+    String lastLocat;
     TextToSpeech tts;
     double lat = -999,lng = -999;
     LocationManager locationManager;
@@ -55,12 +56,13 @@ public class StreamingDataActivity extends AppCompatActivity {
     ChildEventListener cel;
     ArrayList<MsgItem> locatList = new ArrayList<>();
     SharedPreferences sp;
+     ArrayAdapter<String> adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_streaming_data);
         listview=(ListView)findViewById(R.id.listview);
-        final ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,list);
+         adapter=new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,list);
         listview.setAdapter(adapter);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationManagerX();
@@ -96,65 +98,6 @@ public class StreamingDataActivity extends AppCompatActivity {
         });
 
         requireLocationCombile();
-        dref= FirebaseDatabase.getInstance().getReference("message");
-        dref.addChildEventListener(cel = new ChildEventListener()  {
-            int count = 0;
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                count++;
-                String txtTts = dataSnapshot.child("msg").getValue(String.class);
-                requireLocationCombile();
-                double g = dataSnapshot.child("lng").getValue(double.class);
-                double t = dataSnapshot.child("lat").getValue(double.class);
-                Geocoder gcd = new Geocoder(getBaseContext(), Locale.TRADITIONAL_CHINESE);
-                String oldThor = null,newThor = null;
-                    try {
-                        List<Address> oldAdd = gcd.getFromLocation(t, g, 1);
-                        oldThor = oldAdd.get(0).getThoroughfare();
-                        List<Address> newAdd = gcd.getFromLocation(lat, lng, 1);
-                        newThor = newAdd.get(0).getThoroughfare();
-
-                        Log.d("json Old", oldAdd.get(0).getThoroughfare());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }catch (NullPointerException e){
-                       e.printStackTrace();
-                    }
-                if(Objects.equals(oldThor, newThor) && oldThor != null && newThor!=null){
-
-                list.add(txtTts);
-                if(count >= dataSnapshot.getChildrenCount()){
-                    if(sp.getBoolean("ttsOn",true)) {
-                        tts.speak(list.get(list.size() - 1), TextToSpeech.QUEUE_FLUSH, null);
-
-                        edtTtsOnOrOff.setText("自動語音：開");
-                    }else{
-
-                        edtTtsOnOrOff.setText("自動語音：閂");
-                    }
-                }else{
-
-                }
-                adapter.notifyDataSetChanged();
-                listview.smoothScrollToPosition(listview.getAdapter().getCount()-1);
-
-                }
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                list.remove(dataSnapshot.child("msg").getValue(String.class));
-                adapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
         tts.stop();
 }
 
@@ -165,6 +108,8 @@ public class StreamingDataActivity extends AppCompatActivity {
             tts.shutdown();
 
         }
+
+        dref.removeEventListener(cel);
         finish();
         super.onPause();
     }
@@ -233,6 +178,71 @@ public class StreamingDataActivity extends AppCompatActivity {
             }
         }
         Log.v("location",lat +"，" + lng);
+        Geocoder gcd = new Geocoder(getBaseContext(), Locale.TRADITIONAL_CHINESE);
+        final String oldThor = null;
+        String newThor = null;
+
+        try {
+            //List<Address> oldAdd = gcd.getFromLocation(t, g, 1);
+           // oldThor = oldAdd.get(0).getThoroughfare();
+            List<Address> newAdd = gcd.getFromLocation(lat, lng, 1);
+            newThor = newAdd.get(0).getThoroughfare();
+            lastLocat = newThor;
+
+           // Log.d("json Old", oldAdd.get(0).getThoroughfare());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+        try {
+            dref.removeEventListener(cel);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+        dref= FirebaseDatabase.getInstance().getReference("message").child(lastLocat);
+        dref.addChildEventListener(cel = new ChildEventListener()  {
+            int count = 0;
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                count++;
+                String txtTts = dataSnapshot.child("msg").getValue(String.class);
+
+                double g = dataSnapshot.child("lng").getValue(double.class);
+                double t = dataSnapshot.child("lat").getValue(double.class);
+
+               // if(Objects.equals(oldThor, newThor) && oldThor != null && newThor!=null){
+
+                    list.add(0,txtTts);
+                        if(sp.getBoolean("ttsOn",true)) {
+                            tts.speak(list.get(0), TextToSpeech.QUEUE_FLUSH, null);
+
+                            edtTtsOnOrOff.setText("自動語音：開");
+                        }else{
+
+                            edtTtsOnOrOff.setText("自動語音：閂");
+                        }
+
+                    adapter.notifyDataSetChanged();
+                    listview.smoothScrollToPosition(0);
+
+                }
+           //}
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                list.remove(dataSnapshot.child("msg").getValue(String.class));
+                adapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     @Override
