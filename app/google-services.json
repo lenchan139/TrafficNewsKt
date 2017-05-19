@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "434644797205",
+    "firebase_url": "https://trafficnewsandroid.firebaseio.com",
+    "project_id": "trafficnewsandroid",
+    "storage_bucket": "trafficnewsandroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434644797205:android:b5b095b3b43b7f48",
+        "android_client_info": {
+          "package_name": "org.lenchan139.trafficnews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434644797205-0p8b1los3he6sdsukr5l65lm0mjuapm2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.lenchan139.trafficnews",
+            "certificate_hash": "2a2547ba9de2852f93cc9161a35b0c61339694fc"
+          }
+        },
+        {
+          "client_id": "434644797205-3072nbco4tbl3ok3sbnmlb06u9lo15hk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZHBTipqfl4HCdK--iygStZQ82TZPhECA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434644797205-3072nbco4tbl3ok3sbnmlb06u9lo15hk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
