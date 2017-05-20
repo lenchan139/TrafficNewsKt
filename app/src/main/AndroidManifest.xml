@@ -32,11 +32,14 @@
         <activity android:name=".CreateAccountActivity" />
         <activity
             android:name=".MainMenuActivity"
-            android:label="@string/title_activity_main_menu"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SpeechToTextActivity" />
-        <activity android:name=".TextToSpeechActivity" />
-        <activity android:name=".NotificationActivity" />
+        <activity android:name=".SpeechToTextActivity"
+            android:label="上傳新聞"/>
+        <activity android:name=".TextToSpeechActivity"
+            android:label="聆聽新聞"/>
+        <activity android:name=".NotificationActivity"
+            android:label="通知"/>
 
         <service
             android:name=".MyFirebaseInstanceIDService"
@@ -55,7 +58,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".StreamingDataActivity"></activity>
+        <activity android:name=".StreamingDataActivity"
+            android:label="實時狀況"></activity>
     </application>
 
 </manifest>
