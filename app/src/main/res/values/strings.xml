@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">實時新聞</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_main_menu">MainMenuActivity</string>
+    <string name="action_settings"> </string>
+    <string name="title_activity_main_menu">實時新聞</string>
 </resources>

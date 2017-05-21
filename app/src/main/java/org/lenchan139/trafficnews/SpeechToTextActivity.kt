@@ -107,6 +107,7 @@ class SpeechToTextActivity : AppCompatActivity(), GoogleApiClient.ConnectionCall
             } catch (e2: NullPointerException) {
                 e2.printStackTrace()
                 Toast.makeText(this, "獲取地理位置失敗！", Toast.LENGTH_SHORT).show()
+                finish()
             }
 
         }
@@ -115,9 +116,14 @@ class SpeechToTextActivity : AppCompatActivity(), GoogleApiClient.ConnectionCall
         try {
             val address = geocoder.getFromLocation(lat, lng, 1).get(0)
             txtCurrLoc!!.text = address.thoroughfare
+            if(address.thoroughfare != null)
             Log.v("currLoc",address.thoroughfare)
         } catch (e: IOException) {
             e.printStackTrace()
+        } catch(e1: NullPointerException){
+            e1.printStackTrace()
+        }catch (e2: IllegalArgumentException){
+            e2.printStackTrace()
         }
 
     }

@@ -159,7 +159,8 @@ class StreamingDataActivity : AppCompatActivity() {
                 lng = locationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).longitude
             } catch (e2: NullPointerException) {
                 e2.printStackTrace()
-                Toast.makeText(this, "獲取地理位置失敗！", Toast.LENGTH_SHORT)
+                Toast.makeText(this, "獲取地理位置失敗！", Toast.LENGTH_SHORT).show()
+                finish()
             }
 
         }
@@ -171,10 +172,16 @@ class StreamingDataActivity : AppCompatActivity() {
 
             //List<Address> oldAdd = gcd.getFromLocation(t, g, 1);
             // oldThor = oldAdd.get(0).getThoroughfare();
-            val newAdd = gcd.getFromLocation(lat, lng, 1).get(0)
-            newThor = newAdd.thoroughfare
-            lastLocat = newThor
+         try {
+             val newAdd = gcd.getFromLocation(lat, lng, 1).get(0)
+             newThor = newAdd.thoroughfare
+             lastLocat = newThor
+         }catch (e1: IllegalArgumentException){
+             e1.printStackTrace()
+             Toast.makeText(this, "獲取地理位置失敗！", Toast.LENGTH_SHORT).show()
+             finish()
 
+         }
             // Log.d("json Old", oldAdd.get(0).getThoroughfare());
 if(lastLocat == null){
 
